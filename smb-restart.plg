@@ -2,18 +2,21 @@
 
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
-<!ENTITY author    "you">
-<!ENTITY version   "2026.07.25">
+<!ENTITY author    "Maxwell Luong">
+<!ENTITY version   "2026.07.25.1">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "3ff7f6fbba81cebed5a9ae8a7397c165">
+<!ENTITY pkgMD5    "db7aaadcc08c84ee35abce272785cebf">
 ]>
 
-<PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" min="6.9.0">
+<PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Add plugin icon (shown on the Plugins page) and repo description.
+
+###2026.07.25
 - Initial release: restart/start SMB via a Tools page and a topbar status icon.
   </CHANGES>
 

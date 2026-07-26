@@ -71,10 +71,10 @@ version's GitHub Release and installs it.
    local path/URL reachable from the Unraid box).
 
 ### Option C — install the package directly (simplest for personal/single-box use)
-1. `scp smb-restart-2026.07.25-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
+1. `scp smb-restart-2026.07.25.1-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
 2. SSH into Unraid and run:
    ```
-   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25-noarch.txz
+   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.1-noarch.txz
    /usr/local/emhttp/plugins/smb-restart/event/started
    ```
 3. Reload the webGUI page — the icon should appear in the topbar, and **Tools → SMB Restart**
@@ -83,7 +83,7 @@ version's GitHub Release and installs it.
    `/boot/config/plugins/smb-restart/` (Option B's scp target already does this) — Unraid replays
    plugin installs from `/boot/config/plugins/` at boot for anything with a matching `.plg`, but
    for a manually-installed package without a `.plg` present you should instead add
-   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25-noarch.txz`
+   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.1-noarch.txz`
    to your **Settings → User Scripts** "At Startup of Array" script, or use `go` file in
    `/boot/config/go`.
 
@@ -92,7 +92,7 @@ version's GitHub Release and installs it.
 Via Plugins page (if installed via `.plg`), or manually:
 ```
 sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/Header.php
-removepkg smb-restart-2026.07.25-noarch
+removepkg smb-restart-2026.07.25.1-noarch
 rm -rf /boot/config/plugins/smb-restart
 ```
 
