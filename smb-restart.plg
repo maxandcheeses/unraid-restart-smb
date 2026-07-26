@@ -5,7 +5,8 @@
 <!ENTITY author    "you">
 <!ENTITY version   "2026.07.25">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
-<!ENTITY pkgURL    "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/&name;-&version;-noarch.txz">
+<!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
+<!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
 <!ENTITY pkgMD5    "3ff7f6fbba81cebed5a9ae8a7397c165">
 ]>
 

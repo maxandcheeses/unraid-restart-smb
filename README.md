@@ -43,22 +43,24 @@ This produces `smb-restart-<version>-noarch.txz` in this directory.
 ## Install on your Unraid server
 
 ### Option A — install straight from the GitHub URL (recommended)
-This repo is hosted at `git@github.com:maxandcheeses/unraid-restart-smb.git`, and `smb-restart.plg`
-points its `pkgURL`/`pluginURL` entities at the raw GitHub URLs for the `.txz` and `.plg` on the
-`main` branch, so no separate hosting is needed. Every time you push a new build's `.txz` to
-`main`, those raw URLs serve the new file automatically.
+This repo is hosted at `git@github.com:maxandcheeses/unraid-restart-smb.git`. `smb-restart.plg`'s
+`pluginURL` points at the raw `.plg` on `main`, and its `pkgURL` points at that version's `.txz`
+attached as a **GitHub Release asset** (tag `v<version>`) — the `.txz` itself is *not* committed
+to `main` (it's gitignored), which keeps repo history source-only instead of accumulating binary
+blobs on every release.
 
 On the Unraid webGUI, go to **Plugins → Install Plugin**, and paste:
 ```
 https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg
 ```
-Click Install. Unraid downloads the `.plg`, which in turn downloads the matching `.txz` from the
-same repo and installs it.
+Click Install. Unraid downloads the `.plg`, which in turn downloads the matching `.txz` from that
+version's GitHub Release and installs it.
 
-> Note: the built `.txz` for the current version must actually be committed to `main` for its
-> raw URL to resolve, and its MD5 must match the `pkgMD5` entity in `smb-restart.plg` — the
-> `release-manager` subagent (`.claude/agents/release-manager.md`) handles keeping these in sync
-> when cutting a release.
+> Note: for this to resolve, a GitHub Release tagged `v<version>` must exist with the matching
+> `.txz` attached, and its MD5 must match the `pkgMD5` entity in `smb-restart.plg`. The
+> `release-manager` subagent (`.claude/agents/release-manager.md`) handles all of this — bumping
+> the version, rebuilding, and running `gh release create` with the asset attached — when cutting
+> a release.
 
 ### Option B — install from a local file path (no network needed)
 1. Copy this whole directory to the Unraid server (e.g. via the `/boot` flash share or `scp`).

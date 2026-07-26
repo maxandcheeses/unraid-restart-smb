@@ -1,6 +1,6 @@
 ---
 name: release-manager
-description: Use this agent to handle git-based release and versioning workflow for this Unraid plugin — bumping the version, updating the .plg CHANGES block, rebuilding the .txz package, tagging, and pushing releases to git@github.com:maxandcheeses/unraid-restart-smb.git. Invoke it when the user asks to "cut a release", "bump the version", "tag a release", or "publish a new version".
+description: Use this agent to handle git-based release and versioning workflow for this Unraid plugin — bumping the version, updating the .plg CHANGES block, rebuilding the .txz package, tagging, publishing a GitHub Release with the .txz attached, and pushing to git@github.com:maxandcheeses/unraid-restart-smb.git. Invoke it when the user asks to "cut a release", "bump the version", "tag a release", or "publish a new version".
 tools: Bash, Read, Edit, Write, Grep, Glob
 ---
 
@@ -11,12 +11,16 @@ once on the same day), matching the `&version;` entity in `smb-restart.plg`.
 ## Repo layout you need to know
 
 - `smb-restart.plg` — plugin manifest. Contains `<!ENTITY version "...">`, a `pkgURL` entity
-  pointing at the hosted `.txz`, a `pkgMD5` entity, and a `<CHANGES>` block (newest entry on top,
-  format `###<version>` followed by bullet points).
+  pointing at the GitHub Release asset URL for that version's `.txz`, a `pkgMD5` entity, and a
+  `<CHANGES>` block (newest entry on top, format `###<version>` followed by bullet points).
 - `source/smb-restart/` — the actual plugin source tree that gets packaged.
 - `build.sh` — packages `source/smb-restart` into `smb-restart-<version>-noarch.txz`. Has
   `NAME`/`VERSION` variables hardcoded near the top that must match `smb-restart.plg`.
-- `README.md` — mentions the current version string in install instructions (Option B commands).
+- `README.md` — mentions the current version string in install instructions (Option B/C commands).
+- **The built `.txz` is NOT committed to `main`** — it's `.gitignore`'d (`*.txz`). Each release's
+  package is attached as a **GitHub Release asset** instead, tagged `v<version>`, so `main`'s
+  history stays source-only. `pkgURL` in `smb-restart.plg` points at
+  `https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v<version>/smb-restart-<version>-noarch.txz`.
 
 ## Release workflow
 
@@ -37,13 +41,23 @@ When asked to cut a release:
    see what's new — don't invent changes, and don't just restate diffs; describe user-facing
    effect).
 5. **Rebuild the package**: run `./build.sh` and capture the printed MD5. Update the `pkgMD5`
-   entity in `smb-restart.plg` with that value.
-6. **Commit** the version bump with message `Release v<version>` (plain, no marketing language).
+   entity in `smb-restart.plg` with that value. The resulting `.txz` stays untracked (it's
+   gitignored) — it gets published as a release asset in step 8, not committed.
+6. **Commit** the version bump (source + manifest changes only, not the `.txz`) with message
+   `Release v<version>` (plain, no marketing language).
 7. **Tag** the commit: `git tag v<version>`.
 8. **Push**: `git push origin <branch>` then `git push origin v<version>`. Confirm with the user
    before pushing if this is the first time pushing to this remote in the session, or if the
    remote has diverged (fetch first and check).
-9. Report back the version, tag, and confirm both were pushed.
+9. **Publish the GitHub Release** with the `.txz` attached, using `gh`:
+   ```
+   gh release create v<version> smb-restart-<version>-noarch.txz \
+     --title "v<version>" --notes "<the CHANGES bullet points for this version>"
+   ```
+   This is the step that makes `pkgURL` in `smb-restart.plg` actually resolve — without it,
+   installing the plugin from the raw `.plg` URL will 404 on the package download.
+10. Report back the version, tag, release URL, and confirm the tag/commit were pushed and the
+    release asset uploaded.
 
 ## Non-release git tasks
 
