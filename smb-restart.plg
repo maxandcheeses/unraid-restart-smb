@@ -3,17 +3,23 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.9">
+<!ENTITY version   "2026.07.25.10">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "4aad737e292ab5eb7c36b1d5a1fc0dab">
+<!ENTITY pkgMD5    "0cbd2e2e2f40a49fa886cd598788dc3e">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Add a "Show icon in topbar" toggle on the Tools page. Uses the page
+  Cond="..." mechanism, so when off, the nav-item button is not rendered at
+  all (not just hidden) rather than patching or hacking anything. Takes
+  effect on next page load/reload.
+
+###2026.07.25.9
 - Switch the nav-item icon to a transparent-background version of the same
   artwork, so it sits directly on the topbar instead of showing a black
   square behind it.

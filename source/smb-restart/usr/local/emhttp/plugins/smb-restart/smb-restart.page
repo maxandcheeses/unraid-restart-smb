@@ -6,12 +6,16 @@ Icon="icon-share"
 $running = false;
 exec('pidof smbd', $o, $ret);
 $running = ($ret === 0);
+
+$cfg = @parse_ini_file('/boot/config/plugins/smb-restart/smb-restart.cfg');
+$showNav = ($cfg['SHOW_NAV_ICON'] ?? 'true') !== 'false';
 ?>
 <style>
 #smb-restart-status { font-size: 1.1em; margin-bottom: 1em; }
 #smb-restart-status .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
 #smb-restart-status .dot.up { background:#3c3; }
 #smb-restart-status .dot.down { background:#c33; }
+#smb-restart-settings { margin: 1.5em 0; padding-top: 1em; border-top: 1px solid rgba(128,128,128,0.3); }
 </style>
 
 <div id="smb-restart-status">
@@ -21,6 +25,14 @@ $running = ($ret === 0);
 
 <button class="btn" id="smb-restart-btn">Restart / Start SMB</button>
 <div id="smb-restart-result" style="margin-top:1em;white-space:pre-wrap;"></div>
+
+<div id="smb-restart-settings">
+  <label>
+    <input type="checkbox" id="smb-restart-shownav" <?= $showNav ? 'checked' : '' ?>>
+    Show icon in topbar
+  </label>
+  <div id="smb-restart-settings-note" style="margin-top:0.5em;color:#888;"></div>
+</div>
 
 <script>
 function doSmbAction() {
@@ -49,6 +61,13 @@ $('#smb-restart-btn').on('click', function(){
     }, function(isConfirm){
       if (isConfirm) doSmbAction();
     });
+  });
+});
+
+$('#smb-restart-shownav').on('change', function(){
+  var show = $(this).is(':checked');
+  $.getJSON('/plugins/smb-restart/include/exec.php', {action:'save-settings', showNav: show}, function(){
+    $('#smb-restart-settings-note').text('Saved — reload any page to see the topbar icon ' + (show ? 'appear' : 'disappear') + '.');
   });
 });
 </script>

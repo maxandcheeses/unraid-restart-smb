@@ -2,6 +2,7 @@ Menu="Buttons"
 Title="SMB Restart"
 Icon="smb-restart.png"
 Code="f021"
+Cond="(@parse_ini_file('/boot/config/plugins/smb-restart/smb-restart.cfg')['SHOW_NAV_ICON'] ?? 'true') !== 'false'"
 ---
 <?PHP
 /* Renders as a real nav-item button in the topbar's right-hand button row
