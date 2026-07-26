@@ -3,17 +3,21 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.5">
+<!ENTITY version   "2026.07.25.6">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "15c671f23e2136a1bee6923d8b6dbb99">
+<!ENTITY pkgMD5    "021b71b157e4d0df76143cca0a0a1e0f">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- New Plugins-page icon: black rounded-square app icon with a white
+  restart-arrow + "SMB" glyph.
+
+###2026.07.25.5
 - Add a confirmation dialog before restarting/starting SMB, on both the
   topbar button and the Tools page button. Text adapts to current state:
   "Restart SMB?" if it's running, "Start SMB?" if it's stopped, with a
