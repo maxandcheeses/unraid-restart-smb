@@ -3,17 +3,21 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.6">
+<!ENTITY version   "2026.07.25.7">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "021b71b157e4d0df76143cca0a0a1e0f">
+<!ENTITY pkgMD5    "3a986560e7c7e6b0fc38f991ee19a36c">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Refined Plugins-page icon: cleaner restart-arrow ring with "SMB" text
+  below it (no overlap), still black background / white glyph.
+
+###2026.07.25.6
 - New Plugins-page icon: black rounded-square app icon with a white
   restart-arrow + "SMB" glyph.
 
