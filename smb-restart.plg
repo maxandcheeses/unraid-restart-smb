@@ -15,8 +15,8 @@
   <CHANGES>
 ###&version;
 - Fix topbar-injection target: patch webGui/include/DefaultPageLayout.php (the
-  file with the real </body>) instead of a nonexistent Header.php path — the
-  prior release's patch was silently a no-op on Unraid 7.x.
+  file with the real closing body tag) instead of a nonexistent Header.php
+  path — the prior release's patch was silently a no-op on Unraid 7.x.
 - Fix build.sh to stop shipping macOS AppleDouble (._*) resource-fork files
   into the package.
 
