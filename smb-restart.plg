@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="yes"?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "smb-restart">
+<!ENTITY author    "you">
+<!ENTITY version   "2026.07.25">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
+<!ENTITY pkgURL    "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/&name;-&version;-noarch.txz">
+<!ENTITY pkgMD5    "3ff7f6fbba81cebed5a9ae8a7397c165">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" min="6.9.0">
+
+  <CHANGES>
+###&version;
+- Initial release: restart/start SMB via a Tools page and a topbar status icon.
+  </CHANGES>
+
+  <FILE Name="/boot/config/plugins/&name;/&name;-&version;-noarch.txz" Min="6.9.0">
+    <URL>&pkgURL;</URL>
+    <MD5>&pkgMD5;</MD5>
+  </FILE>
+
+  <FILE Run="/bin/bash">
+    <INLINE>
+upgradepkg --install-new --reinstall /boot/config/plugins/&name;/&name;-&version;-noarch.txz
+/usr/local/emhttp/plugins/&name;/event/started
+    </INLINE>
+  </FILE>
+
+  <FILE Run="/bin/bash" Method="remove">
+    <INLINE>
+# undo the header patch, then remove the package's files
+sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/Header.php 2>/dev/null
+removepkg &name;-&version;-noarch
+rm -rf /boot/config/plugins/&name;
+    </INLINE>
+  </FILE>
+
+</PLUGIN>

@@ -1,0 +1,36 @@
+Menu="Utilities"
+Title="SMB Restart"
+Icon="icon-share"
+---
+<?php
+$running = false;
+exec('pidof smbd', $o, $ret);
+$running = ($ret === 0);
+?>
+<style>
+#smb-restart-status { font-size: 1.1em; margin-bottom: 1em; }
+#smb-restart-status .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+#smb-restart-status .dot.up { background:#3c3; }
+#smb-restart-status .dot.down { background:#c33; }
+</style>
+
+<div id="smb-restart-status">
+  <span class="dot <?= $running ? 'up' : 'down' ?>"></span>
+  SMB server is currently <b><?= $running ? 'running' : 'stopped' ?></b>
+</div>
+
+<button class="btn" id="smb-restart-btn">Restart / Start SMB</button>
+<div id="smb-restart-result" style="margin-top:1em;white-space:pre-wrap;"></div>
+
+<script>
+$('#smb-restart-btn').on('click', function(){
+  var $btn = $(this).prop('disabled', true).text('Working...');
+  $.getJSON('/plugins/smb-restart/include/exec.php', {action:'restart'}, function(data){
+    $('#smb-restart-result').text(data.action + ' — running: ' + data.running + (data.output ? ('\n' + data.output) : ''));
+    $('#smb-restart-status .dot').attr('class', 'dot ' + (data.running ? 'up' : 'down'));
+    $('#smb-restart-status b').text(data.running ? 'running' : 'stopped');
+  }).always(function(){
+    $btn.prop('disabled', false).text('Restart / Start SMB');
+  });
+});
+</script>

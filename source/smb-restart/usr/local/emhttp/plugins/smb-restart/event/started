@@ -1,0 +1,18 @@
+#!/bin/bash
+# Runs on every array start / webGUI (re)load. Re-applies the topbar
+# script injection idempotently, since Header.php can be overwritten
+# by an Unraid OS update and would otherwise lose the patch.
+
+HEADER="/usr/local/emhttp/webGui/include/Header.php"
+MARK_START="<!-- smb-restart:start -->"
+MARK_END="<!-- smb-restart:end -->"
+SNIPPET="${MARK_START}\n<script src=\"/plugins/smb-restart/javascript/smb-restart.js\"></script>\n${MARK_END}"
+
+[[ -f "$HEADER" ]] || exit 0
+
+# Remove any previous injection (in case the file changed) then re-insert.
+sed -i "/${MARK_START}/,/${MARK_END}/d" "$HEADER"
+
+if grep -q '</body>' "$HEADER"; then
+    sed -i "s#</body>#${SNIPPET}\n</body>#" "$HEADER"
+fi
