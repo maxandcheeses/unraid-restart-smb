@@ -3,24 +3,34 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.3">
+<!ENTITY version   "2026.07.25.4">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "17277e9348de3f5804ce91529867605e">
+<!ENTITY pkgMD5    "6e96125688c4b38e5cf2b93f7b67cc27">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Fix nav-item icon: resize to 16x16 (was 128x128, wildly oversized for the
+  topbar) and switch to a colored disc glyph matching the convention used by
+  Unraid's own icons (e.g. the power button), instead of a large flat
+  black-on-white square.
+- Add Code="f021" (fontawesome refresh icon) so the button still renders via
+  Unraid's CSS ::before font-icon path at wide viewports (1330px+), where
+  Unraid hides the image icon entirely and requires a Code-based icon instead.
+
+###2026.07.25.3
 - Replace the core-file-patching topbar hack with the real mechanism Unraid
   provides: a Menu="Buttons" page (SmbRestart.page), which renders as an
   actual nav-item button next to search/notifications/logout — the same way
   Unraid's own power button works. No patched core files anymore.
-- New black-and-white icon.
-- Fix build.sh to stop shipping macOS AppleDouble (._*) resource-fork files
-  into the package.
+
+###2026.07.25.2
+- Fix topbar-injection target and stop shipping macOS AppleDouble junk files
+  (superseded by the 2026.07.25.3 rewrite above).
 
 ###2026.07.25.1
 - Add plugin icon (shown on the Plugins page) and repo description.

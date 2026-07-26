@@ -1,6 +1,7 @@
 Menu="Buttons"
 Title="SMB Restart"
 Icon="smb-restart.png"
+Code="f021"
 ---
 <?PHP
 /* Renders as a real nav-item button in the topbar's right-hand button row
@@ -16,7 +17,11 @@ $(function() {
 
   function paint(running) {
     $btn.attr('title', running ? 'SMB is running — click to restart' : 'SMB is stopped — click to start');
+    // Two rendering modes depending on viewport width: an <img> (narrow) or a
+    // CSS ::before font-icon using the page's Code attribute (wide, >=1330px).
+    // Cover both: dim the image, and recolor the element (::before inherits it).
     $btn.find('img').css('opacity', running ? 1 : 0.4);
+    $btn.css('color', running ? '' : '#e05d44');
   }
 
   function poll() {

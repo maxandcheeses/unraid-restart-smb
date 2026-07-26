@@ -4,9 +4,26 @@
 set -euo pipefail
 
 NAME="smb-restart"
-VERSION="2026.07.25.3"
+VERSION="2026.07.25.4"
 PKG="${NAME}-${VERSION}-noarch.txz"
 SRC="source/${NAME}"
+PLG="${NAME}.plg"
+
+# Catch invalid XML in the .plg before it ever gets pushed/installed — a
+# literal "<" in CHANGES text (e.g. "</body>", "<img>") parses as a real,
+# unmatched tag and breaks the whole file for Unraid's plugin installer.
+python3 - "${PLG}" <<'EOF'
+import sys, xml.parsers.expat
+p = xml.parsers.expat.ParserCreate()
+p.DefaultHandler = lambda data: None
+with open(sys.argv[1], 'rb') as f:
+    data = f.read()
+try:
+    p.Parse(data, True)
+except Exception as e:
+    print(f"ERROR: {sys.argv[1]} is not well-formed XML: {e}", file=sys.stderr)
+    sys.exit(1)
+EOF
 
 # Strip any macOS resource-fork / Finder metadata files (._*, .DS_Store) that
 # accumulate under source/ when working on macOS, so they don't ship in the package.

@@ -40,9 +40,13 @@ When asked to cut a release:
    summarizing what changed since the last release (use `git log <last-tag>..HEAD --oneline` to
    see what's new — don't invent changes, and don't just restate diffs; describe user-facing
    effect).
-5. **Rebuild the package**: run `./build.sh` and capture the printed MD5. Update the `pkgMD5`
-   entity in `smb-restart.plg` with that value. The resulting `.txz` stays untracked (it's
-   gitignored) — it gets published as a release asset in step 8, not committed.
+5. **Rebuild the package**: run `./build.sh` and capture the printed MD5. `build.sh` validates
+   `smb-restart.plg` is well-formed XML before packaging and fails loudly if not — do not bypass
+   or remove that check; a literal `<` in CHANGES text (e.g. `</body>`, `<img>`) parses as a real
+   unmatched tag and silently breaks Unraid's plugin installer with a useless-looking "XML parse
+   error" (this has happened twice — write CHANGES text without literal angle brackets). Update
+   the `pkgMD5` entity in `smb-restart.plg` with the printed MD5. The resulting `.txz` stays
+   untracked (it's gitignored) — it gets published as a release asset in step 8, not committed.
 6. **Commit** the version bump (source + manifest changes only, not the `.txz`) with message
    `Release v<version>` (plain, no marketing language).
 7. **Tag** the commit: `git tag v<version>`.
