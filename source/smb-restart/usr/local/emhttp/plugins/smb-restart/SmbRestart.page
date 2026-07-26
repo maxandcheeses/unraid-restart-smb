@@ -14,8 +14,10 @@ $attr   = version_compare($unraid['version'], '6.11.9', '>') ? '.' : '#';
 $(function() {
   var $btn = $('<?=$attr?>nav-item.SmbRestart a');
   $btn.prop('onclick', null).attr('id', 'nav-smb-restart');
+  var lastRunning = null;
 
   function paint(running) {
+    lastRunning = running;
     $btn.attr('title', running ? 'SMB is running — click to restart' : 'SMB is stopped — click to start');
     // Two rendering modes depending on viewport width: an <img> (narrow) or a
     // CSS ::before font-icon using the page's Code attribute (wide, >=1330px).
@@ -30,12 +32,37 @@ $(function() {
     });
   }
 
-  $btn.on('click', function(e) {
-    e.preventDefault();
+  function doAction() {
     $btn.find('img').css('opacity', 0.7);
     $.getJSON('/plugins/smb-restart/include/exec.php', {action: 'restart'}, function(data) {
       paint(data.running);
     });
+  }
+
+  $btn.on('click', function(e) {
+    e.preventDefault();
+    function confirmAndRun(running) {
+      swal({
+        title: running ? 'Restart SMB?' : 'Start SMB?',
+        text: running
+          ? 'This will restart the SMB server, briefly disconnecting any active SMB connections.'
+          : 'SMB is currently stopped. Start it now?',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: running ? 'Restart' : 'Start',
+        cancelButtonText: 'Cancel'
+      }, function(isConfirm) {
+        if (isConfirm) doAction();
+      });
+    }
+    if (lastRunning === null) {
+      $.getJSON('/plugins/smb-restart/include/exec.php', {action: 'status'}, function(data) {
+        paint(data.running);
+        confirmAndRun(data.running);
+      });
+    } else {
+      confirmAndRun(lastRunning);
+    }
   });
 
   poll();

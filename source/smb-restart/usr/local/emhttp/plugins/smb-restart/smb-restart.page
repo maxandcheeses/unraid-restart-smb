@@ -23,14 +23,32 @@ $running = ($ret === 0);
 <div id="smb-restart-result" style="margin-top:1em;white-space:pre-wrap;"></div>
 
 <script>
-$('#smb-restart-btn').on('click', function(){
-  var $btn = $(this).prop('disabled', true).text('Working...');
+function doSmbAction() {
+  var $btn = $('#smb-restart-btn').prop('disabled', true).text('Working...');
   $.getJSON('/plugins/smb-restart/include/exec.php', {action:'restart'}, function(data){
     $('#smb-restart-result').text(data.action + ' — running: ' + data.running + (data.output ? ('\n' + data.output) : ''));
     $('#smb-restart-status .dot').attr('class', 'dot ' + (data.running ? 'up' : 'down'));
     $('#smb-restart-status b').text(data.running ? 'running' : 'stopped');
   }).always(function(){
     $btn.prop('disabled', false).text('Restart / Start SMB');
+  });
+}
+
+$('#smb-restart-btn').on('click', function(){
+  $.getJSON('/plugins/smb-restart/include/exec.php', {action:'status'}, function(data){
+    var running = data.running;
+    swal({
+      title: running ? 'Restart SMB?' : 'Start SMB?',
+      text: running
+        ? 'This will restart the SMB server, briefly disconnecting any active SMB connections.'
+        : 'SMB is currently stopped. Start it now?',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: running ? 'Restart' : 'Start',
+      cancelButtonText: 'Cancel'
+    }, function(isConfirm){
+      if (isConfirm) doSmbAction();
+    });
   });
 });
 </script>
