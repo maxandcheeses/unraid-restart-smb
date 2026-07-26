@@ -4,11 +4,9 @@
 set -euo pipefail
 
 NAME="smb-restart"
-VERSION="2026.07.25.2"
+VERSION="2026.07.25.3"
 PKG="${NAME}-${VERSION}-noarch.txz"
 SRC="source/${NAME}"
-
-chmod +x "${SRC}/usr/local/emhttp/plugins/${NAME}/event/started"
 
 # Strip any macOS resource-fork / Finder metadata files (._*, .DS_Store) that
 # accumulate under source/ when working on macOS, so they don't ship in the package.

@@ -3,20 +3,22 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.2">
+<!ENTITY version   "2026.07.25.3">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "2e8b4db25e40d0b2bd27738d8fd26a05">
+<!ENTITY pkgMD5    "17277e9348de3f5804ce91529867605e">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
-- Fix topbar-injection target: patch webGui/include/DefaultPageLayout.php (the
-  file with the real closing body tag) instead of a nonexistent Header.php
-  path — the prior release's patch was silently a no-op on Unraid 7.x.
+- Replace the core-file-patching topbar hack with the real mechanism Unraid
+  provides: a Menu="Buttons" page (SmbRestart.page), which renders as an
+  actual nav-item button next to search/notifications/logout — the same way
+  Unraid's own power button works. No patched core files anymore.
+- New black-and-white icon.
 - Fix build.sh to stop shipping macOS AppleDouble (._*) resource-fork files
   into the package.
 
@@ -35,14 +37,11 @@
   <FILE Run="/bin/bash">
     <INLINE>
 upgradepkg --install-new --reinstall /boot/config/plugins/&name;/&name;-&version;-noarch.txz
-/usr/local/emhttp/plugins/&name;/event/started
     </INLINE>
   </FILE>
 
   <FILE Run="/bin/bash" Method="remove">
     <INLINE>
-# undo the layout patch, then remove the package's files
-sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/DefaultPageLayout.php 2>/dev/null
 removepkg &name;-&version;-noarch
 rm -rf /boot/config/plugins/&name;
     </INLINE>

@@ -1,0 +1,39 @@
+Menu="Buttons"
+Title="SMB Restart"
+Icon="smb-restart.png"
+---
+<?PHP
+/* Renders as a real nav-item button in the topbar's right-hand button row
+ * (same mechanism Unraid itself uses for the power button), via find_pages('Buttons')
+ * in webGui/include/PageBuilder.php. No core-file patching involved. */
+$unraid = parse_ini_file('/etc/unraid-version');
+$attr   = version_compare($unraid['version'], '6.11.9', '>') ? '.' : '#';
+?>
+<script>
+$(function() {
+  var $btn = $('<?=$attr?>nav-item.SmbRestart a');
+  $btn.prop('onclick', null).attr('id', 'nav-smb-restart');
+
+  function paint(running) {
+    $btn.attr('title', running ? 'SMB is running — click to restart' : 'SMB is stopped — click to start');
+    $btn.find('img').css('opacity', running ? 1 : 0.4);
+  }
+
+  function poll() {
+    $.getJSON('/plugins/smb-restart/include/exec.php', {action: 'status'}, function(data) {
+      paint(data.running);
+    });
+  }
+
+  $btn.on('click', function(e) {
+    e.preventDefault();
+    $btn.find('img').css('opacity', 0.7);
+    $.getJSON('/plugins/smb-restart/include/exec.php', {action: 'restart'}, function(data) {
+      paint(data.running);
+    });
+  });
+
+  poll();
+  setInterval(poll, 15000);
+});
+</script>

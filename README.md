@@ -1,28 +1,30 @@
 # smb-restart (Unraid plugin)
 
 Adds:
-- A **Tools → Utilities → SMB Restart** page with live status and a restart/start button.
-- A small status icon injected into the top navbar (near search/notifications/logout) that shows
-  SMB's running state (green/red) and restarts (or starts) SMB on click.
+- A real **nav-item button** in the topbar, right next to search/notifications/logout, that shows
+  SMB's running state and restarts (or starts) SMB on click.
+- A **Tools → Utilities → SMB Restart** page with live status and a restart/start button, for the
+  same action without needing the topbar.
 
 SMB is controlled via Unraid's own `/etc/rc.d/rc.samba` script, so this uses the same start/stop
 path Unraid itself uses when you toggle SMB in Settings — it won't fight with the OS.
 
-## How the topbar icon works
+## How the topbar button works
 
-Unraid doesn't have an official "add an icon to the topbar" extension point for plugins, so this
-uses the same technique real-world Unraid plugins use: on every array start (`event/started`) the
-plugin idempotently patches `/usr/local/emhttp/webGui/include/DefaultPageLayout.php` (the file
-with the page's actual `</body>`) to load `javascript/smb-restart.js`.
+Unraid's topbar buttons (search, notifications, logout, the power button, etc.) are, on the
+webGUI's non-sidebar theme, rendered server-side by `webGui/include/DefaultPageLayout/Navigation/Main.php`
+from `find_pages('Buttons')` in `webGui/include/PageBuilder.php` — i.e. any installed `.page` file
+with `Menu="Buttons"` in its header automatically becomes a `nav-item` button in that same row. This
+is the exact mechanism Unraid's own power button uses (`dynamix.system.buttons/PowerButton.page`).
 
-On Unraid 7.x, the topbar itself (search/notifications/logout) is rendered by a web component
-(`<unraid-header-os-version>`, shipped by the bundled `dynamix.my.servers` plugin), which likely
-renders into a shadow root our script can't reach into or insert alongside. Because of that,
-`javascript/smb-restart.js` doesn't try to squeeze into that tray — it renders its own small status
-icon fixed to the top-right corner of the page, visually next to where those icons live, rather
-than literally inside their container. If a future Unraid version exposes an open (non-shadow)
-DOM for the topbar, `findTopbarContainer()` in that file can be updated to insert into it directly
-instead. Uninstalling the plugin removes the `DefaultPageLayout.php` patch automatically.
+`SmbRestart.page` in this plugin does exactly that — no core-file patching, no DOM-injection
+guessing, no shadow-DOM workarounds. Its icon (`icons/smb-restart.png`) is looked up from the
+plugin's own `icons/` directory, and its inline `<script>` block (following the same pattern as
+`PowerButton.page`) finds its own `nav-item.SmbRestart a` element, wires up the click handler, and
+polls `include/exec.php?action=status` every 15s to keep the icon's state current.
+
+(An earlier version of this plugin patched a core webGUI file to inject a floating status icon —
+that approach is gone; this is simpler and correct.)
 
 ## Files
 
@@ -30,10 +32,11 @@ instead. Uninstalling the plugin removes the `DefaultPageLayout.php` patch autom
 smb-restart.plg                 - plugin installer manifest
 source/smb-restart/...          - files installed onto Unraid, mirrors target paths:
   usr/local/emhttp/plugins/smb-restart/
-    smb-restart.page            - Tools page (status + manual restart button)
-    include/exec.php            - status/restart endpoint, calls rc.samba
-    javascript/smb-restart.js   - topbar icon injection + polling
-    event/started               - re-applies the DefaultPageLayout.php patch on every array start
+    SmbRestart.page              - Menu="Buttons" page -> real topbar nav-item button
+    smb-restart.page             - Tools page (status + manual restart button)
+    include/exec.php             - status/restart endpoint, calls rc.samba
+    icons/smb-restart.png        - topbar button icon
+    images/smb-restart.png       - Plugins-page listing icon (same artwork)
 build.sh                        - packages source/ into the .txz Slackware package
 ```
 
@@ -66,6 +69,11 @@ version's GitHub Release and installs it.
 > `release-manager` subagent (`.claude/agents/release-manager.md`) handles all of this — bumping
 > the version, rebuilding, and running `gh release create` with the asset attached — when cutting
 > a release.
+>
+> Also note: `raw.githubusercontent.com` is fronted by a CDN that can serve a stale cached copy of
+> `main` for a few minutes after a push, inconsistently per request/PoP. If a fresh install/update
+> doesn't pick up the version you just pushed, wait a few minutes and retry, or install from the
+> exact commit SHA (`.../<sha>/smb-restart.plg`) instead of `main`, which is cached immutably.
 
 ### Option B — install from a local file path (no network needed)
 1. Copy this whole directory to the Unraid server (e.g. via the `/boot` flash share or `scp`).
@@ -76,19 +84,18 @@ version's GitHub Release and installs it.
    local path/URL reachable from the Unraid box).
 
 ### Option C — install the package directly (simplest for personal/single-box use)
-1. `scp smb-restart-2026.07.25.2-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
+1. `scp smb-restart-2026.07.25.3-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
 2. SSH into Unraid and run:
    ```
-   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.2-noarch.txz
-   /usr/local/emhttp/plugins/smb-restart/event/started
+   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.3-noarch.txz
    ```
-3. Reload the webGUI page — the icon should appear in the topbar, and **Tools → SMB Restart**
+3. Reload the webGUI page — the button should appear in the topbar, and **Tools → SMB Restart**
    will show the manual page.
 4. To make this persist across reboots, also drop a copy of the `.txz` under
    `/boot/config/plugins/smb-restart/` (Option B's scp target already does this) — Unraid replays
    plugin installs from `/boot/config/plugins/` at boot for anything with a matching `.plg`, but
    for a manually-installed package without a `.plg` present you should instead add
-   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.2-noarch.txz`
+   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.3-noarch.txz`
    to your **Settings → User Scripts** "At Startup of Array" script, or use `go` file in
    `/boot/config/go`.
 
@@ -96,15 +103,15 @@ version's GitHub Release and installs it.
 
 Via Plugins page (if installed via `.plg`), or manually:
 ```
-sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/DefaultPageLayout.php
-removepkg smb-restart-2026.07.25.2-noarch
+removepkg smb-restart-2026.07.25.3-noarch
 rm -rf /boot/config/plugins/smb-restart
 ```
 
-## Customizing where the icon lands
+## Note on plugin "descriptions"
 
-If the icon doesn't show up next to search/logout on your Unraid version, open
-`source/smb-restart/usr/local/emhttp/plugins/smb-restart/javascript/smb-restart.js` and inspect
-your topbar's HTML (right-click → Inspect near the search icon) to find the right container
-selector, add it to the `selectors` array in `findTopbarContainer()`, then re-run `./build.sh`
-and reinstall.
+Unraid's core webGUI doesn't render a free-text description for manually-installed (non-Community-
+Applications) plugins — the Plugins page shows Name/Author/Version/icon, and the "Readme" button
+shows the `<CHANGES>` block from the `.plg`, which is the only place to put user-facing release
+notes for a plugin installed this way. A Community-Applications-store-style description requires
+actually submitting the plugin to the CA feed (a separate, heavier process), which this repo does
+not do.
