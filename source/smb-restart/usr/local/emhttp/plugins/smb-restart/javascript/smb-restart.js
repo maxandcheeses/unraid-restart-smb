@@ -1,9 +1,13 @@
-/* smb-restart: injects a status/restart icon into the top navbar,
- * next to the search / notifications / logout icons.
+/* smb-restart: shows a status/restart icon near the search / notifications /
+ * logout icons in the top navbar.
  *
- * Unraid's topbar markup has shifted slightly across releases, so this
- * tries a list of known container selectors and falls back to a fixed
- * floating button (still visually "near" that corner) if none match. */
+ * On Unraid 6.x the topbar is plain DOM, so this first tries a list of known
+ * container selectors and inserts directly into them. On Unraid 7.x the
+ * topbar is rendered by a web component (<unraid-header-os-version>, from
+ * dynamix.my.servers) which likely uses a shadow root querySelector can't
+ * see into or insert alongside — in that case (or on any future markup
+ * change) this falls back to a small fixed-position icon pinned to the
+ * top-right corner, next to but not literally inside that tray. */
 (function () {
     'use strict';
 
@@ -54,11 +58,12 @@
             container.insertBefore(icon, container.firstChild);
         } else {
             icon.style.position = 'fixed';
-            icon.style.top = '8px';
-            icon.style.right = '120px';
-            icon.style.zIndex = 9999;
-            icon.style.background = 'rgba(0,0,0,0.6)';
-            icon.style.borderRadius = '4px';
+            icon.style.top = '12px';
+            icon.style.right = '16px';
+            icon.style.zIndex = 999999;
+            icon.style.background = 'rgba(20,20,22,0.85)';
+            icon.style.borderRadius = '50%';
+            icon.style.boxShadow = '0 1px 4px rgba(0,0,0,0.4)';
             document.body.appendChild(icon);
         }
 

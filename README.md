@@ -12,12 +12,17 @@ path Unraid itself uses when you toggle SMB in Settings — it won't fight with 
 
 Unraid doesn't have an official "add an icon to the topbar" extension point for plugins, so this
 uses the same technique real-world Unraid plugins use: on every array start (`event/started`) the
-plugin idempotently patches `/usr/local/emhttp/webGui/include/Header.php` to load
-`javascript/smb-restart.js`, which then finds the topbar icon tray in the DOM and inserts the
-status icon. If Unraid changes its topbar markup in a future release, the icon falls back to a
-small floating button in the top-right so it still works — you'd just want to update the CSS
-selectors in `javascript/smb-restart.js` (`findTopbarContainer()`) to match the new markup.
-Uninstalling the plugin removes the patch automatically.
+plugin idempotently patches `/usr/local/emhttp/webGui/include/DefaultPageLayout.php` (the file
+with the page's actual `</body>`) to load `javascript/smb-restart.js`.
+
+On Unraid 7.x, the topbar itself (search/notifications/logout) is rendered by a web component
+(`<unraid-header-os-version>`, shipped by the bundled `dynamix.my.servers` plugin), which likely
+renders into a shadow root our script can't reach into or insert alongside. Because of that,
+`javascript/smb-restart.js` doesn't try to squeeze into that tray — it renders its own small status
+icon fixed to the top-right corner of the page, visually next to where those icons live, rather
+than literally inside their container. If a future Unraid version exposes an open (non-shadow)
+DOM for the topbar, `findTopbarContainer()` in that file can be updated to insert into it directly
+instead. Uninstalling the plugin removes the `DefaultPageLayout.php` patch automatically.
 
 ## Files
 
@@ -28,7 +33,7 @@ source/smb-restart/...          - files installed onto Unraid, mirrors target pa
     smb-restart.page            - Tools page (status + manual restart button)
     include/exec.php            - status/restart endpoint, calls rc.samba
     javascript/smb-restart.js   - topbar icon injection + polling
-    event/started               - re-applies the Header.php patch on every array start
+    event/started               - re-applies the DefaultPageLayout.php patch on every array start
 build.sh                        - packages source/ into the .txz Slackware package
 ```
 
@@ -71,10 +76,10 @@ version's GitHub Release and installs it.
    local path/URL reachable from the Unraid box).
 
 ### Option C — install the package directly (simplest for personal/single-box use)
-1. `scp smb-restart-2026.07.25.1-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
+1. `scp smb-restart-2026.07.25.2-noarch.txz root@<unraid-ip>:/boot/config/plugins/smb-restart/`
 2. SSH into Unraid and run:
    ```
-   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.1-noarch.txz
+   upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.2-noarch.txz
    /usr/local/emhttp/plugins/smb-restart/event/started
    ```
 3. Reload the webGUI page — the icon should appear in the topbar, and **Tools → SMB Restart**
@@ -83,7 +88,7 @@ version's GitHub Release and installs it.
    `/boot/config/plugins/smb-restart/` (Option B's scp target already does this) — Unraid replays
    plugin installs from `/boot/config/plugins/` at boot for anything with a matching `.plg`, but
    for a manually-installed package without a `.plg` present you should instead add
-   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.1-noarch.txz`
+   `upgradepkg --install-new --reinstall /boot/config/plugins/smb-restart/smb-restart-2026.07.25.2-noarch.txz`
    to your **Settings → User Scripts** "At Startup of Array" script, or use `go` file in
    `/boot/config/go`.
 
@@ -91,8 +96,8 @@ version's GitHub Release and installs it.
 
 Via Plugins page (if installed via `.plg`), or manually:
 ```
-sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/Header.php
-removepkg smb-restart-2026.07.25.1-noarch
+sed -i '/<!-- smb-restart:start -->/,/<!-- smb-restart:end -->/d' /usr/local/emhttp/webGui/include/DefaultPageLayout.php
+removepkg smb-restart-2026.07.25.2-noarch
 rm -rf /boot/config/plugins/smb-restart
 ```
 
