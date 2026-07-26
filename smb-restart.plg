@@ -3,17 +3,23 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.07.25.7">
+<!ENTITY version   "2026.07.25.8">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "3a986560e7c7e6b0fc38f991ee19a36c">
+<!ENTITY pkgMD5    "19c073bb8cf9bcee3bb44589791ae35b">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- New icon (two-tone circular sync arrows with "SMB" text), used for both
+  the Plugins-page listing and the topbar nav-item button. The nav icon is
+  24x24 rather than Unraid's usual 16x16 so the text/ring stay legible at
+  that detail level.
+
+###2026.07.25.7
 - Refined Plugins-page icon: cleaner restart-arrow ring with "SMB" text
   below it (no overlap), still black background / white glyph.
 
