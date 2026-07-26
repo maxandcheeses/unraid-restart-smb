@@ -4,7 +4,7 @@
 set -euo pipefail
 
 NAME="smb-restart"
-VERSION="2026.07.25.8"
+VERSION="2026.07.25.9"
 PKG="${NAME}-${VERSION}-noarch.txz"
 SRC="source/${NAME}"
 PLG="${NAME}.plg"
