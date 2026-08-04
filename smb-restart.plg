@@ -3,17 +3,22 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.08.04">
+<!ENTITY version   "2026.08.04.1">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "0ca0b63a79f606db92e3e746183be5ac">
+<!ENTITY pkgMD5    "f197a29b24c091ef7a8f63c311926ebb">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- The Plugins-page listing icon is now a link to the plugin's own Settings
+  page (Settings/smb-restart), so clicking it takes you straight to the
+  plugin's settings instead of doing nothing.
+
+###2026.08.04
 - New Plugins-page listing icon (1024x1024, black-on-white, folder+SMB with
   circular sync arrows) and a matching topbar nav-item icon (24x24,
   color-inverted to white-on-transparent so it stays visible against the
