@@ -3,17 +3,26 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.08.04.1">
+<!ENTITY version   "2026.08.04.2">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "f197a29b24c091ef7a8f63c311926ebb">
+<!ENTITY pkgMD5    "2bb893401060ca1161d3d1da2418ce92">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Fix the Plugins-page listing icon's click-to-Settings link not firing.
+  It's now bound via event delegation instead of directly, so it still
+  works even though the Plugins page renders its plugin cards after the
+  original binding would have run.
+- Fix the Plugins-page listing icon showing a white background instead of
+  being transparent. Regenerated as true RGBA artwork with alpha
+  transparency.
+
+###2026.08.04.1
 - The Plugins-page listing icon is now a link to the plugin's own Settings
   page (Settings/smb-restart), so clicking it takes you straight to the
   plugin's settings instead of doing nothing.
