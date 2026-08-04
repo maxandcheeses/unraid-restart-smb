@@ -15,6 +15,10 @@ $attr   = version_compare($unraid['version'], '6.11.9', '>') ? '.' : '#';
 /* On the Plugins management page, make our listing icon look clickable. Applies live even
    though that page's plugin cards are rendered/re-rendered after this stylesheet loads. */
 img[src*="plugins/smb-restart/images/smb-restart.png"] { cursor: pointer; }
+
+/* Unraid's topbar CSS fixes nav-item <img> display size regardless of the file's
+   actual pixel dimensions, so the source image being 18x18 isn't enough on its own. */
+nav-item.SmbRestart img { width: 18px !important; height: 18px !important; }
 </style>
 <script>
 $(function() {
