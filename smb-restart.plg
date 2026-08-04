@@ -3,17 +3,26 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.08.04.3">
+<!ENTITY version   "2026.08.04.4">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "e4f284f16645064a4a3c4feabe338c4d">
+<!ENTITY pkgMD5    "58a26112746ab4b58f1ec4ea17299876">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Fix the topbar nav-item icon still rendering oversized despite the
+  previous release's 18x18 source image: Unraid's topbar CSS forces the
+  displayed image size regardless of the source file's pixel dimensions, so
+  shrinking the source alone had no visible effect. Added a CSS rule to
+  force the nav-item icon to display at 18x18, and regenerated the source
+  icon at 144x144 (8x) so it stays crisp on HiDPI/retina displays when
+  downscaled.
+
+###2026.08.04.3
 - Shrink the topbar nav-item icon from 24x24 to 18x18 so it sits better
   alongside the other navbar icons.
 
