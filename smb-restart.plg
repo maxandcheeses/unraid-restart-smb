@@ -3,17 +3,21 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name      "smb-restart">
 <!ENTITY author    "Maxwell Luong">
-<!ENTITY version   "2026.08.04.2">
+<!ENTITY version   "2026.08.04.3">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/maxandcheeses/unraid-restart-smb/main/smb-restart.plg">
 <!-- The .txz is attached as a GitHub Release asset (tag vVERSION), not committed to main. -->
 <!ENTITY pkgURL    "https://github.com/maxandcheeses/unraid-restart-smb/releases/download/v&version;/&name;-&version;-noarch.txz">
-<!ENTITY pkgMD5    "2bb893401060ca1161d3d1da2418ce92">
+<!ENTITY pkgMD5    "e4f284f16645064a4a3c4feabe338c4d">
 ]>
 
 <PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" icon="images/smb-restart.png" min="6.9.0">
 
   <CHANGES>
 ###&version;
+- Shrink the topbar nav-item icon from 24x24 to 18x18 so it sits better
+  alongside the other navbar icons.
+
+###2026.08.04.2
 - Fix the Plugins-page listing icon's click-to-Settings link not firing.
   It's now bound via event delegation instead of directly, so it still
   works even though the Plugins page renders its plugin cards after the
