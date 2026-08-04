@@ -68,5 +68,12 @@ $(function() {
 
   poll();
   setInterval(poll, 15000);
+
+  // On the Plugins management page, make our listing icon a link to the settings page.
+  $('img[src*="plugins/smb-restart/images/smb-restart.png"]').css('cursor', 'pointer').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.href = '/Settings/smb-restart';
+  });
 });
 </script>
