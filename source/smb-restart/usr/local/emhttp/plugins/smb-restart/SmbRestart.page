@@ -11,6 +11,11 @@ Cond="(@parse_ini_file('/boot/config/plugins/smb-restart/smb-restart.cfg')['SHOW
 $unraid = parse_ini_file('/etc/unraid-version');
 $attr   = version_compare($unraid['version'], '6.11.9', '>') ? '.' : '#';
 ?>
+<style>
+/* On the Plugins management page, make our listing icon look clickable. Applies live even
+   though that page's plugin cards are rendered/re-rendered after this stylesheet loads. */
+img[src*="plugins/smb-restart/images/smb-restart.png"] { cursor: pointer; }
+</style>
 <script>
 $(function() {
   var $btn = $('<?=$attr?>nav-item.SmbRestart a');
@@ -70,7 +75,8 @@ $(function() {
   setInterval(poll, 15000);
 
   // On the Plugins management page, make our listing icon a link to the settings page.
-  $('img[src*="plugins/smb-restart/images/smb-restart.png"]').css('cursor', 'pointer').on('click', function(e) {
+  // Delegated on document because the plugin cards there are rendered after this script runs.
+  $(document).on('click', 'img[src*="plugins/smb-restart/images/smb-restart.png"]', function(e) {
     e.preventDefault();
     e.stopPropagation();
     window.location.href = '/Settings/smb-restart';
